@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GlowUp – Beauty & Salon</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<style>
+  :root {
+    --primary: #6C5CE7;
+    --primary-light: #a29bfe;
+    --primary-dark: #4834d4;
+    --accent: #fd79a8;
+    --gold: #f9ca24;
+    --text: #1a1a2e;
+    --text-muted: #6b7280;
+    --bg: #f8f7ff;
+    --white: #ffffff;
+    --card-bg: #ffffff;
+    --border: #e8e6f0;
+    --shadow: 0 4px 24px rgba(108,92,231,0.10);
+    --shadow-md: 0 8px 32px rgba(108,92,231,0.15);
+    --radius: 20px;
+    --radius-sm: 12px;
+    --radius-lg: 28px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: "Poppins";
+    color: var(--text);
+  }
+
+  /* ───── LAYOUT ───── */
+  .app-shell {
+    max-width: 1300px;
+    margin: 0 auto;
+    background: var(--white);
+    position: relative;
+  }
+
+
+
+  /* ───── SCROLLABLE CONTENT ───── */
+  .content-scroll {
+    padding-bottom: 90px;
+    scroll-behavior: smooth;
+  }
+  .content-scroll::-webkit-scrollbar { display: none; }
+
+  /* ───── TOPBAR ───── */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 22px 10px;
+    position: sticky;
+    top: 0;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(12px);
+    z-index: 10;
+  }
+  .topbar-avatar {
+    width: 46px; height: 46px;
+    border-radius: 50%;
+    overflow: hidden;
+  }
+  .topbar-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .topbar-actions { display: flex; gap: 10px; }
+  .icon-btn {
+    width: 42px; height: 42px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border);
+    background: var(--white);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all .2s;
+    position: relative;
+    color: var(--text);
+    font-size: 16px;
+  }
+  .icon-btn:hover { background: var(--primary); color: var(--white); border-color: var(--primary); }
+  .notif-dot {
+    position: absolute; top: 8px; right: 9px;
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    border: 2px solid var(--white);
+  }
+
+  /* ───── GREETING ───── */
+  .greeting {
+    padding: 18px 22px 6px;
+  }
+  .greeting h1 {
+    font-family: "Poppins";
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+  }
+  .greeting .location {
+    display: flex; align-items: center; gap: 5px;
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-top: 5px;
+  }
+  .greeting .location i { color: var(--primary); font-size: 12px; }
+
+  /* ───── APPOINTMENT CARD ───── */
+  .section { padding: 20px 22px 0; }
+  .section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .section-title {
+    font-family: "Poppins";
+    font-size: 20px; font-weight: 700;
+  }
+  .section-sub { font-size: 13px; color: var(--text-muted); }
+  .view-all {
+    font-size: 13px; color: var(--primary); font-weight: 600;
+    cursor: pointer; text-decoration: none;
+    transition: opacity .2s;
+  }
+  .view-all:hover { opacity: .7; }
+
+  .appt-card {
+    background: linear-gradient(120deg, var(--primary) 0%, var(--primary-dark) 100%);
+    border-radius: var(--radius-lg);
+    padding: 20px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    box-shadow: 0 6px 24px rgba(108,92,231,0.28);
+    transition: transform .2s, box-shadow .2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .appt-card::before {
+    content: '';
+    position: absolute;
+    top: -30px; right: -30px;
+    width: 100px; height: 100px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 50%;
+  }
+  .appt-card::after {
+    content: '';
+    position: absolute;
+    bottom: -20px; right: 60px;
+    width: 70px; height: 70px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 50%;
+  }
+  .appt-card:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(108,92,231,0.36); }
+  .appt-left { display: flex; align-items: center; gap: 14px; }
+  .appt-icon {
+    width: 42px; height: 42px;
+    background: rgba(255,255,255,0.18);
+    border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--white);
+    font-size: 18px;
+    backdrop-filter: blur(4px);
+  }
+  .appt-info .salon-name {
+    color: var(--white);
+    font-weight: 600;
+    font-size: 15px;
+  }
+  .appt-info .appt-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 20px;
+    padding: 2px 10px;
+    font-size: 11px;
+    color: rgba(255,255,255,0.85);
+    margin-top: 3px;
+  }
+  .appt-time {
+    color: var(--white);
+    font-size: 18px;
+    font-weight: 700;
+    font-family: "Poppins";
+    position: relative; z-index: 1;
+  }
+
+  /* ───── SERVICES ───── */
+  .services-scroll {
+    display: flex; gap: 14px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    scroll-snap-type: x mandatory;
+  }
+  .services-scroll::-webkit-scrollbar { display: none; }
+  .service-card {
+    flex: 0 0 110px;
+    scroll-snap-align: start;
+    background: var(--white);
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1.5px solid var(--border);
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .service-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+  .service-img {
+    width: 100%; height: 90px;
+    object-fit: cover;
+    background: #f0eeff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+  }
+  .service-img img { width: 100%; height: 100%; object-fit: cover; }
+  .service-label {
+    padding: 8px 6px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  /* ───── NEAREST SALON ───── */
+  .salon-cards {
+    flex-direction: row;
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    scroll-snap-type: x mandatory;
+  }
+  .salon-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    min-width: 300px;
+    box-shadow: var(--shadow);
+    border: 1.5px solid var(--border);
+    cursor: pointer;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .salon-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+  .salon-banner {
+    width: 100%; height: 160px;
+    object-fit: cover;
+    background: linear-gradient(120deg,#e0d7ff,#fce4ec);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 50px;
+    position: relative;
+  }
+  .salon-banner img { width: 100%; height: 100%; object-fit: cover; }
+  .salon-banner-badge {
+    position: absolute; top: 12px; right: 12px;
+    background: rgba(255,255,255,0.92);
+    border-radius: 20px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--primary);
+    backdrop-filter: blur(6px);
+  }
+  .salon-info { padding: 14px 16px; }
+  .salon-row { display: flex; align-items: center; justify-content: space-between; }
+  .salon-name { font-weight: 700; font-size: 16px; }
+  .salon-addr { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+  .salon-meta { display: flex; align-items: center; gap: 14px; margin-top: 10px; }
+  .stars { display: flex; gap: 2px; }
+  .stars i { color: var(--gold); font-size: 12px; }
+  .dist { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--text-muted); }
+  .dist i { color: var(--primary); font-size: 11px; }
+  .book-btn {
+    background: var(--primary);
+    color: var(--white);
+    border: none;
+    border-radius: 10px;
+    padding: 8px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: "Poppins";
+    transition: background .2s, transform .2s;
+  }
+  .book-btn:hover { background: var(--primary-dark); transform: scale(1.03); }
+
+  /* ───── NEARBY LIST CARDS (Image 2 style) ───── */
+  .nearby-list { 
+      flex-direction: row;
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    scroll-snap-type: x mandatory;}
+  .nearby-item {
+    background: var(--white);
+    border-radius: var(--radius);
+    border: 1.5px solid var(--border);
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    max-width: 300px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .nearby-item:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .nearby-thumb {
+    width: 70px; height: 70px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    flex-shrink: 0;
+    background: linear-gradient(135deg,#e0d7ff,#fce4ec);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+  }
+  .nearby-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .nearby-details { flex: 1; min-width: 0; }
+  .nearby-name { font-weight: 700; font-size: 15px; }
+  .nearby-addr { font-size: 12px; color: var(--text-muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .nearby-meta { display: flex; align-items: center; gap: 12px; margin-top: 6px; }
+  .nearby-star { display: flex; align-items: center; gap: 3px; font-size: 12px; font-weight: 600; color: var(--text); }
+  .nearby-star i { color: var(--gold); }
+  .nearby-dist { display: flex; align-items: center; gap: 3px; font-size: 12px; color: var(--text-muted); }
+  .nearby-dist i { color: var(--primary); }
+  .nearby-book {
+    background: var(--primary);
+    color: var(--white);
+    border: none;
+    border-radius: 10px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: "Poppins";
+    transition: background .2s;
+    flex-shrink: 0;
+  }
+  .nearby-book:hover { background: var(--primary-dark); }
+
+  /* ───── BOTTOM NAV ───── */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 1300px;
+    background: rgba(255,255,255,0.96);
+    backdrop-filter: blur(16px);
+    border-top: 1px solid var(--border);
+    display: flex;
+    padding: 10px 0 16px;
+    z-index: 20;
+  }
+  @media (min-width: 900px) { .bottom-nav { border-radius: 0 0 40px 40px; } }
+  .nav-item {
+    flex: 1;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 20px;
+    transition: color .2s;
+    position: relative;
+  }
+  .nav-item.active { color: var(--primary); }
+  .nav-item.active::after {
+    content: '';
+    position: absolute; bottom: -10px;
+    width: 4px; height: 4px;
+    background: var(--primary);
+    border-radius: 50%;
+  }
+  .nav-label { font-size: 10px; font-weight: 600; }
+
+  /* ───── CALENDAR POPUP ───── */
+  .overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(26,26,46,0.55);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+  }
+  .overlay.open { display: flex; animation: fadeIn .25s ease; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .modal {
+    background: var(--white);
+    border-radius: 28px;
+    width: 100%;
+    max-width: 430px;
+    padding: 28px 24px 32px;
+    box-shadow: 0 -8px 40px rgba(108,92,231,0.18);
+    animation: slideUp .3s cubic-bezier(.4,0,.2,1);
+  }
+  @keyframes slideUp { from { transform: translateY(60px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+  .modal-handle {
+    width: 40px; height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin: 0 auto 20px;
+  }
+  .modal-title {
+    font-family: "Poppins";
+    font-size: 22px; font-weight: 700;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .close-modal {
+    position: absolute; top: 20px; right: 24px;
+    font-size: 20px; cursor: pointer; color: var(--text-muted);
+    background: none; border: none;
+    transition: color .2s;
+  }
+  .close-modal:hover { color: var(--text); }
+
+  /* Calendar */
+  .cal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .cal-nav { background: none; border: 1.5px solid var(--border); border-radius: 10px; width: 36px; height: 36px; cursor: pointer; font-size: 14px; color: var(--text); transition: all .2s; }
+  .cal-nav:hover { background: var(--primary); color: var(--white); border-color: var(--primary); }
+  .cal-month { font-family: "Poppins"; font-size: 17px; font-weight: 700; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; margin-bottom: 20px; }
+  .cal-day-name { text-align: center; font-size: 11px; font-weight: 600; color: var(--text-muted); padding: 6px 0; }
+  .cal-day {
+    text-align: center; font-size: 13px; font-weight: 500;
+    padding: 8px 4px; border-radius: 10px; cursor: pointer;
+    transition: all .15s;
+  }
+  .cal-day:hover:not(.empty):not(.disabled) { background: var(--primary-light); color: var(--white); }
+  .cal-day.today { background: #f0eeff; color: var(--primary); font-weight: 700; }
+  .cal-day.selected { background: var(--primary); color: var(--white); font-weight: 700; }
+  .cal-day.disabled { color: #ccc; pointer-events: none; }
+  .cal-day.empty { cursor: default; }
+
+  /* Time Slots */
+  .slot-title { font-weight: 700; font-size: 15px; margin-bottom: 12px; }
+  .time-slots { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
+  .time-slot {
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 16px;
+    font-size: 13px; font-weight: 500;
+    cursor: pointer; transition: all .15s;
+  }
+  .time-slot:hover { border-color: var(--primary); color: var(--primary); }
+  .time-slot.selected { background: var(--primary); color: var(--white); border-color: var(--primary); }
+
+  .confirm-btn {
+    width: 100%;
+    background: linear-gradient(120deg, var(--primary), var(--primary-dark));
+    color: var(--white);
+    border: none;
+    border-radius: 16px;
+    padding: 16px;
+    font-size: 16px; font-weight: 700;
+    cursor: pointer; font-family: "Poppins";
+    box-shadow: 0 4px 18px rgba(108,92,231,0.28);
+    transition: transform .2s, box-shadow .2s;
+  }
+  .confirm-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(108,92,231,0.36); }
+
+  /* ───── SECTION SPACING ───── */
+  .spacer { height: 20px; }
+
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+  <div class="content-scroll">
+
+    <!-- TOP BAR -->
+    <div class="topbar">
+      <div class="topbar-avatar">
+        <img src="https://i.pravatar.cc/100?img=47" alt="Zara Rehman">
+      </div>
+      <div class="topbar-actions">
+        <div class="icon-btn" title="Notifications">
+          <i class="fas fa-bell"></i>
+          <span class="notif-dot"></span>
+        </div>
+        <div class="icon-btn" title="Search">
+          <i class="fas fa-magnifying-glass"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- GREETING -->
+    <div class="greeting">
+      <h1>Hi, Kelowna Service@Raese developer 👋</h1>
+      <p class="location">
+        <i class="fas fa-location-dot"></i>
+        6391 Elgin St. Celina, Delaware 10299
+      </p>
+    </div>
+
+    <!-- APPOINTMENT -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-title">Appointment</span>
+        <span class="section-sub">Today, Morning</span>
+      </div>
+      <div class="appt-card" id="openSchedule">
+        <div class="appt-left">
+          <div class="appt-icon"><i class="fas fa-calendar-check"></i></div>
+          <div class="appt-info">
+            <div class="salon-name">At The Galleria Hair Salon</div>
+          </div>
+        </div>
+        <div class="appt-info">
+                <span class="appt-badge"><i class="fas fa-clock"></i> Scheduled</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SERVICES -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-title">Services</span>
+        <a class="view-all" href="#">View All</a>
+      </div>
+      <div class="services-scroll">
+        <div class="service-card">
+          <div class="service-img"><img src="https://images.unsplash.com/photo-1560869713-7d0a29430803?w=200&h=120&fit=crop" alt="Haircuts"></div>
+          <div class="service-label">Haircuts</div>
+        </div>
+        <div class="service-card">
+          <div class="service-img"><img src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=200&h=120&fit=crop" alt="Make up"></div>
+          <div class="service-label">Make Up</div>
+        </div>
+        <div class="service-card">
+          <div class="service-img"><img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?w=200&h=120&fit=crop" alt="Manicure"></div>
+          <div class="service-label">Manicure</div>
+        </div>
+        <div class="service-card">
+          <div class="service-img"><img src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=200&h=120&fit=crop" alt="Facial"></div>
+          <div class="service-label">Facial</div>
+        </div>
+        <div class="service-card">
+          <div class="service-img"><img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=200&h=120&fit=crop" alt="Pedicure"></div>
+          <div class="service-label">Pedicure</div>
+        </div>
+      </div>
+    </div>
+
+   
+
+    <!-- NEARBY SALONS (Image 2 style list) -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-title">More Near You</span>
+        <a class="view-all" href="#">View All</a>
+      </div>
+      <div class="nearby-list">
+
+        <div class="nearby-item">
+          <div class="nearby-thumb">
+            <img src="https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?w=150&h=150&fit=crop" alt="Green Apple">
+          </div>
+          <div class="nearby-details">
+            <div class="nearby-name">Green Apple</div>
+            <div class="nearby-addr">6391 Elgin St. Celina, Delaware…</div>
+            <div class="nearby-meta">
+              <span class="nearby-star"><i class="fas fa-star"></i> 5.0</span>
+              <span class="nearby-dist"><i class="fas fa-location-dot"></i> 15 km</span>
+            </div>
+          </div>
+          <button class="nearby-book" onclick="openModal(event)">Book</button>
+        </div>
+
+        <div class="nearby-item">
+          <div class="nearby-thumb">
+            <img src="https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=150&h=150&fit=crop" alt="Glam Studio">
+          </div>
+          <div class="nearby-details">
+            <div class="nearby-name">Glam Studio</div>
+            <div class="nearby-addr">12 Oak Ave, Celina, Delaware…</div>
+            <div class="nearby-meta">
+              <span class="nearby-star"><i class="fas fa-star"></i> 4.8</span>
+              <span class="nearby-dist"><i class="fas fa-location-dot"></i> 8 km</span>
+            </div>
+          </div>
+          <button class="nearby-book" onclick="openModal(event)">Book</button>
+        </div>
+
+        <div class="nearby-item">
+          <div class="nearby-thumb">
+            <img src="https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?w=150&h=150&fit=crop" alt="Belle Salon">
+          </div>
+          <div class="nearby-details">
+            <div class="nearby-name">Belle Salon</div>
+            <div class="nearby-addr">45 Rose Blvd, Celina, Delaware…</div>
+            <div class="nearby-meta">
+              <span class="nearby-star"><i class="fas fa-star"></i> 4.6</span>
+              <span class="nearby-dist"><i class="fas fa-location-dot"></i> 11 km</span>
+            </div>
+          </div>
+          <button class="nearby-book" onclick="openModal(event)">Book</button>
+        </div>
+
+      </div>
+    </div>
+ <!-- NEAREST SALON (banner cards) -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-title">Nearest Salon</span>
+        <a class="view-all" href="#">View All</a>
+      </div>
+      <div class="salon-cards">
+        <div class="salon-card">
+          <div class="salon-banner" style="position:relative;">
+            <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&h=200&fit=crop" alt="Jawed Habib">
+            <span class="salon-banner-badge">⭐ Top Rated</span>
+          </div>
+          <div class="salon-info">
+            <div class="salon-row">
+              <div>
+                <div class="salon-name">Jawed Habib</div>
+                <div class="salon-addr">6391 Elgin St. Celina, Delaware…</div>
+              </div>
+            </div>
+            <div class="salon-meta">
+              <div class="stars">
+                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+              </div>
+              <div class="dist"><i class="fas fa-location-dot"></i> 5 km</div>
+              <button class="book-btn" onclick="openModal(event)">Book</button>
+            </div>
+          </div>
+        </div>
+        <div class="salon-card">
+          <div class="salon-banner" style="position:relative;">
+            <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&h=200&fit=crop" alt="Jawed Habib">
+            <span class="salon-banner-badge">⭐ Top Rated</span>
+          </div>
+          <div class="salon-info">
+            <div class="salon-row">
+              <div>
+                <div class="salon-name">Jawed Habib</div>
+                <div class="salon-addr">6391 Elgin St. Celina, Delaware…</div>
+              </div>
+            </div>
+            <div class="salon-meta">
+              <div class="stars">
+                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+              </div>
+              <div class="dist"><i class="fas fa-location-dot"></i> 5 km</div>
+              <button class="book-btn" onclick="openModal(event)">Book</button>
+            </div>
+          </div>
+        </div>
+        <div class="salon-card">
+          <div class="salon-banner" style="position:relative;">
+            <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&h=200&fit=crop" alt="Jawed Habib">
+            <span class="salon-banner-badge">⭐ Top Rated</span>
+          </div>
+          <div class="salon-info">
+            <div class="salon-row">
+              <div>
+                <div class="salon-name">Jawed Habib</div>
+                <div class="salon-addr">6391 Elgin St. Celina, Delaware…</div>
+              </div>
+            </div>
+            <div class="salon-meta">
+              <div class="stars">
+                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+              </div>
+              <div class="dist"><i class="fas fa-location-dot"></i> 5 km</div>
+              <button class="book-btn" onclick="openModal(event)">Book</button>
+            </div>
+          </div>
+        </div>
+        <div class="salon-card">
+          <div class="salon-banner" style="position:relative;">
+            <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&h=200&fit=crop" alt="Jawed Habib">
+            <span class="salon-banner-badge">⭐ Top Rated</span>
+          </div>
+          <div class="salon-info">
+            <div class="salon-row">
+              <div>
+                <div class="salon-name">Jawed Habib</div>
+                <div class="salon-addr">6391 Elgin St. Celina, Delaware…</div>
+              </div>
+            </div>
+            <div class="salon-meta">
+              <div class="stars">
+                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+              </div>
+              <div class="dist"><i class="fas fa-location-dot"></i> 5 km</div>
+              <button class="book-btn" onclick="openModal(event)">Book</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+    <div class="spacer"></div>
+  </div><!-- /content-scroll -->
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <div class="nav-item active">
+      <i class="fas fa-house"></i>
+      <span class="nav-label">Home</span>
+    </div>
+    <div class="nav-item">
+      <i class="fas fa-location-dot"></i>
+      <span class="nav-label">Explore</span>
+    </div>
+    <div class="nav-item" id="scheduleNav">
+      <i class="fas fa-calendar"></i>
+      <span class="nav-label">Schedule</span>
+    </div>
+    <div class="nav-item">
+      <i class="fas fa-comment-dots"></i>
+      <span class="nav-label">Chat</span>
+    </div>
+    <div class="nav-item">
+      <i class="fas fa-user"></i>
+      <span class="nav-label">Profile</span>
+    </div>
+  </div>
+</div>
+
+<!-- CALENDAR POPUP -->
+<div class="overlay" id="overlay">
+  <div class="modal" style="position:relative;">
+    <div class="modal-handle"></div>
+    <button class="close-modal" id="closeModal"><i class="fas fa-xmark"></i></button>
+    <div class="modal-title">Schedule Appointment</div>
+
+    <!-- Calendar -->
+    <div class="cal-header">
+      <button class="cal-nav" id="prevMonth"><i class="fas fa-chevron-left"></i></button>
+      <span class="cal-month" id="calMonth">June 2025</span>
+      <button class="cal-nav" id="nextMonth"><i class="fas fa-chevron-right"></i></button>
+    </div>
+    <div class="cal-grid" id="calGrid"></div>
+
+    <!-- Time slots -->
+    <div class="slot-title">Available Times</div>
+    <div class="time-slots" id="timeSlots">
+      <div class="time-slot" data-time="9:00 AM">9:00 AM</div>
+      <div class="time-slot" data-time="10:00 AM">10:00 AM</div>
+      <div class="time-slot" data-time="11:00 AM">11:00 AM</div>
+      <div class="time-slot" data-time="12:00 PM">12:00 PM</div>
+      <div class="time-slot" data-time="2:00 PM">2:00 PM</div>
+      <div class="time-slot" data-time="3:00 PM">3:00 PM</div>
+      <div class="time-slot" data-time="4:30 PM">4:30 PM</div>
+      <div class="time-slot" data-time="5:00 PM">5:00 PM</div>
+    </div>
+
+    <button class="confirm-btn" id="confirmBtn">Confirm Appointment</button>
+  </div>
+</div>
+
+<script>
+$(function () {
+
+  /* ── Calendar State ── */
+  const today = new Date();
+  let viewYear = today.getFullYear();
+  let viewMonth = today.getMonth();
+  let selectedDay = today.getDate();
+  let selectedTime = null;
+
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const DAYS   = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+  function renderCalendar() {
+    const firstDay = new Date(viewYear, viewMonth, 1).getDay();
+    const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+    $('#calMonth').text(MONTHS[viewMonth] + ' ' + viewYear);
+
+    let html = DAYS.map(d => `<div class="cal-day-name">${d}</div>`).join('');
+    for (let i = 0; i < firstDay; i++) html += '<div class="cal-day empty"></div>';
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      const isToday  = d === today.getDate() && viewMonth === today.getMonth() && viewYear === today.getFullYear();
+      const isPast   = new Date(viewYear, viewMonth, d) < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      const isSel    = d === selectedDay && viewMonth === today.getMonth() && viewYear === today.getFullYear();
+      let cls = 'cal-day';
+      if (isPast) cls += ' disabled';
+      else if (isSel) cls += ' selected';
+      else if (isToday) cls += ' today';
+      html += `<div class="${cls}" data-day="${d}">${d}</div>`;
+    }
+    $('#calGrid').html(html);
+  }
+
+  $('#prevMonth').click(function () { viewMonth--; if (viewMonth < 0) { viewMonth = 11; viewYear--; } renderCalendar(); });
+  $('#nextMonth').click(function () { viewMonth++; if (viewMonth > 11) { viewMonth = 0; viewYear++; } renderCalendar(); });
+
+  $(document).on('click', '.cal-day:not(.disabled):not(.empty)', function () {
+    $('.cal-day').removeClass('selected');
+    $(this).addClass('selected');
+    selectedDay = parseInt($(this).data('day'));
+  });
+
+  $(document).on('click', '.time-slot', function () {
+    $('.time-slot').removeClass('selected');
+    $(this).addClass('selected');
+    selectedTime = $(this).data('time');
+  });
+
+  /* ── Open / Close ── */
+  function openModal(e) {
+    if (e) e.stopPropagation();
+    renderCalendar();
+    $('#overlay').addClass('open');
+    $('body').css('overflow', 'hidden');
+  }
+  window.openModal = openModal;
+
+  function closeModal() {
+    $('#overlay').removeClass('open');
+    $('body').css('overflow', '');
+  }
+
+  $('#openSchedule, #scheduleNav').click(openModal);
+  $('#closeModal').click(closeModal);
+  $('#overlay').click(function (e) { if ($(e.target).is('#overlay')) closeModal(); });
+
+  /* ── Confirm ── */
+  $('#confirmBtn').click(function () {
+    if (!selectedTime) { alert('Please select a time slot.'); return; }
+    const date = MONTHS[viewMonth] + ' ' + selectedDay + ', ' + viewYear;
+    alert(`✅ Appointment confirmed!\n📅 ${date}\n⏰ ${selectedTime}`);
+    closeModal();
+  });
+
+  /* ── Nav active state ── */
+  $('.nav-item').click(function () {
+    $('.nav-item').removeClass('active');
+    $(this).addClass('active');
+  });
+});
+</script>
+</body>
+</html>
